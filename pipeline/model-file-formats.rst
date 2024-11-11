@@ -231,7 +231,7 @@ Custom object tags    ✔️   ✔️   ✔️    ❌   ❌   ❌
 **Geometry**
 ---------------------------------------------------
 Triangle meshes       ✔️   ✔️   ✔️    ✔️   ✔️   ✔️
-Higher-order polygons ❌   ✔️   ✔️    ❌   ✔️   ✔️
+Higher-order polygons ❌   ✔️   ❌    ❌   ✔️   ✔️
 Lines and segments    ✔️   ✔️   ✔️    ✔️   ✔️   ❌
 Vertex colors         ✔️   ✔️   ✔️    ✔️   ✔️   ✔️
 **Materials and Textures**

@@ -75,16 +75,18 @@ In general, the keyboard event naming follows the following rules:
 
    ``"time-" + <key name>``
 
-Here is an example of time reading in code:
+.. only:: python
 
-.. code-block:: python
+   Here is an example of time reading in code:
 
-   class ReadKeys(DirectObject.DirectObject):
-       def __init__(self):
-           self.accept('time-a-repeat', self.printRepeat)
+   .. code-block:: python
 
-       def printRepeat(self, when):
-           print("repeat a", when)
+      class ReadKeys(DirectObject.DirectObject):
+          def __init__(self):
+              self.accept('time-a-repeat', self.printRepeat)
+
+          def printRepeat(self, when):
+              print("repeat a", when)
 
 6. Keys that don't type a character are labeled as follows::
 
@@ -283,36 +285,75 @@ the GraphicsWindow object, returning a :class:`.ButtonMap` object, which can be
 used to find out which virtual key event will be fired for a certain raw
 keyboard button:
 
-.. code-block:: python
+.. only:: python
 
-   # Get the current keyboard layout.
-   # This may be a somewhat expensive operation, so don't call
-   # it all the time, instead storing the result when possible.
-   map = base.win.get_keyboard_map()
+   .. code-block:: python
 
-   # Use this to print all key mappings
-   print(map)
+      # Get the current keyboard layout.
+      # This may be a somewhat expensive operation, so don't call
+      # it all the time, instead storing the result when possible.
+      map = base.win.get_keyboard_map()
 
-   # Find out which virtual key is associated with the ANSI US "w"
-   w_button = map.get_mapped_button("w")
+      # Use this to print all key mappings
+      print(map)
 
-   # Get a textual representation for the button
-   w_label = map.get_mapped_button_label("w")
-   if w_label:
-       # There is none, use the event name instead.
-       w_label = str(w_button)
-   w_label = w_label.capitalize()
+      # Find out which virtual key is associated with the ANSI US "w"
+      w_button = map.get_mapped_button("w")
 
-   # Use this label to tell the player which button to press.
-   self.tutorial_text = "Press %s to move forward." % (w_label)
+      # Get a textual representation for the button
+      w_label = map.get_mapped_button_label("w")
+      if not w_label:
+          # There is none, use the event name instead.
+          w_label = str(w_button)
+      w_label = w_label.capitalize()
 
-   # Poll to check if the button is pressed...
-   if base.mouseWatcherNode.is_button_down(w_button):
-       print("%s is currently pressed" % (w_label))
+      # Use this label to tell the player which button to press.
+      self.tutorial_text = "Press %s to move forward." % (w_label)
 
-   # ...or register event handlers
-   self.accept("%s" % (w_button), self.start_moving_forward)
-   self.accept("%s-up" % (w_button), self.stop_moving_forward)
+      # Poll to check if the button is pressed...
+      if base.mouseWatcherNode.is_button_down(w_button):
+          print("%s is currently pressed" % (w_label))
+
+      # ...or register event handlers
+      self.accept("%s" % (w_button), self.start_moving_forward)
+      self.accept("%s-up" % (w_button), self.stop_moving_forward)
+
+.. only:: cpp
+
+   .. code-block:: cpp
+
+      // Get the current keyboard layout.
+      // This may be a somewhat expensive operation, so don't call
+      // it all the time, instead storing the result when possible.
+      PT(ButtonMap) map = window->get_keyboard_map();
+
+      // Use this to print all key mappings
+      map->write(std::cout);
+
+      // Find out which virtual key is associated with the ANSI US "w"
+      ButtonHandle w_button = map.get_mapped_button("w");
+
+      // Get a textual representation for the button
+      std::string w_label = map.get_mapped_button_label("w");
+      if (w_label) {
+        // There is none, use the event name instead.
+        w_label = w_button.get_name();
+      }
+      w_label = downcase(w_label); // from string_utils.h
+      w_label[0] = toupper(w_label[0]);
+
+      // Use this label to tell the player which button to press.
+      std::ostringstream str;
+      str << "Press " << w_label << " to move forward.";
+
+      // Poll to check if the button is pressed...
+      if (mouse_watcher->is_button_down(w_button)) {
+        std::cout << w_label << " is currently pressed" << std::endl;
+      }
+
+      // ...or register event handlers
+      framework->define_key(w_button.get_name(), start_moving_forward, nullptr);
+      framework->define_key(w_button.get_name() + "-up", stop_moving_forward, nullptr);
 
 The above code example also illustrates the use of the
 :meth:`~.ButtonMap.get_mapped_button_label()` function to get a textual
